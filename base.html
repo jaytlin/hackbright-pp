@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<div id="react-app">
+		</div>
+		<script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react.js"></script>
+		<script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react-dom.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+		<script type="text/babel">
+
+			var ContactItem = React.createClass({
+				propTypes: {
+					name: React.PropTypes.string.isRequired,
+					email: React.PropTypes.string.isRequired,
+					phone: React.PropTypes.string.isRequired,
+					description: React.PropTypes.string
+				},
+
+				render: function() {
+					var emailLink = "mailto:" + this.props.email;
+
+					return (
+						<li className='ContactItem'>
+							<h2 className='ContactItem-name'>{this.props.name}</h2>
+							<a href={emailLink} className='ContactItem-email'>{this.props.email}</a>
+							<div className='ContactItem-phone'>{this.props.phone}</div>
+							<div className='ContactItem-description'>{this.props.description}</div>
+						</li>
+					)
+				},
+			});
+
+			var EMPTY_CONTACT = {name: "", email: "", description: "", errors: null};
+
+			var ContactForm = React.createClass({
+				propTypes: function() {
+					onSubmit: React.PropTypes.func.isRequired
+				},
+
+				getInitialState: function() {
+					return {
+						newContact: EMPTY_CONTACT
+					}
+				},
+
+				updateName: function(e) {
+					/*
+						var newContact = {};
+						newContact.name = e.target.value;
+						newContact.email = this.state.newContact.email;
+						newContact.description = this.state.newContact.description;
+						this.setState({
+							newContact: newContact
+						});
+					*/
+					this.setState({
+						newContact: Object.assign({}, this.state.newContact, {name: e.target.value})
+					});
+				},
+
+				updateEmail: function(e) {
+					this.setState({
+						newContact: Object.assign({}, this.state.newContact, {email: e.target.value})
+					});
+				},
+
+				updatePhone: function(e) {
+					this.setState({
+						newContact: Object.assign({}, this.state.newContact, {phone: e.target.value})
+					});
+				},
+
+				updateDescription: function(e) {
+					this.setState({
+						newContact: Object.assign({}, this.state.newContact, {description: e.target.value})
+					});
+				},
+
+				onSubmit: function(e) {
+					e.preventDefault(); // This prevents the page from refreshing
+					// Please implement the rest of this function
+					var contact = this.state.newContact;
+					contact.errors = {};
+
+					if (!contact.name) {
+						contact.errors.name = true;
+					}
+
+					if (!contact.email || !/.+@.+\..+/.test(contact.email)) {
+						contact.errors.email = true;
+					}
+
+					if (!contact.phone || !/^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/.test(contact.phone)) {
+						contact.errors.phone = true;
+					}
+
+					if (Object.keys(contact.errors).length === 0) {
+						this.props.onSubmit(this.state.newContact);
+						
+						this.setState({
+							newContact: EMPTY_CONTACT
+						})
+					} else {
+						this.setState({
+							newContact: contact
+						})
+					}
+				},
+
+				render: function() {
+					var errors = this.state.newContact.errors || {};
+					return (
+						<form className='ContactForm' onSubmit={this.onSubmit}>
+							<input
+								placeholder='Name (required)'
+								className={errors.name && 'ContactForm-error'} 
+								value={this.state.newContact.name}
+								onChange={this.updateName}/>
+							<input
+								placeholder='Email (required)'
+								className={errors.email && 'ContactForm-error'} 
+								value={this.state.newContact.email}
+								onChange={this.updateEmail}/>
+							<input
+								placeholder='Phone (required)'
+								className={errors.phone && 'ContactForm-error'} 
+								value={this.state.newContact.phone}
+								onChange={this.updatePhone}/>
+							<textarea
+								placeholder='Description'
+								value={this.state.newContact.description}
+								onChange={this.updateDescription}/>
+							<button type='submit'>Add Contact</button>
+						</form>
+					)
+				}
+			});
+
+			var ContactView = React.createClass({
+				getInitialState: function() {
+					return {
+						contacts: [
+							{name: "Jessica Lin", email: "jessica.lin@redfin.com", phone: "123-456-7890", description: "Occasionally goes by Jaylin"},
+							{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com", phone: "098-765-4321"},
+						]
+					};
+				},
+
+				addNewContact: function(newContact) {
+					// Please implement this function
+					this.state.contacts.push(newContact);
+					
+					this.setState({
+						contacts: this.state.contacts
+					})
+				},
+
+				render: function() {
+					var listElements = this.state.contacts
+						.map(function(contact) { return <ContactItem {...contact}/>; });
+
+					return (
+						<div className='ContactView'>
+							<h1 className='ContactView-title'>Contacts</h1>
+							<ul className='ContactView-list'>{listElements}</ul>
+							<ContactForm onSubmit={this.addNewContact}/>
+						</div>
+					);
+				},
+			});
+
+			ReactDOM.render(
+				<ContactView/>,
+				document.getElementById('react-app')
+			)
+		</script>
+	</body>
+</html>
