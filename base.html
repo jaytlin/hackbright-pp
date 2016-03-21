@@ -15,6 +15,7 @@
 				propTypes: {
 					name: React.PropTypes.string.isRequired,
 					email: React.PropTypes.string.isRequired,
+					phone: React.PropTypes.string.isRequired,
 					description: React.PropTypes.string
 				},
 
@@ -25,6 +26,7 @@
 						<li className='ContactItem'>
 							<h2 className='ContactItem-name'>{this.props.name}</h2>
 							<a href={emailLink} className='ContactItem-email'>{this.props.email}</a>
+							<div className='ContactItem-phone'>{this.props.phone}</div>
 							<div className='ContactItem-description'>{this.props.description}</div>
 						</li>
 					)
@@ -39,18 +41,19 @@
 				},
 
 				updateName: function(e) {
-					this.props.contact.name = e.target.value;
-					this.props.onChange(this.props.contact);
+					this.props.onChange(Object.assign({}, this.props.contact, {name: e.target.value}));
 				},
 
 				updateEmail: function(e) {
-					this.props.contact.email = e.target.value;
-					this.props.onChange(this.props.contact);
+					this.props.onChange(Object.assign({}, this.props.contact, {email: e.target.value}));
+				},
+
+				updatePhone: function(e) {
+					this.props.onChange(Object.assign({}, this.props.contact, {phone: e.target.value}));
 				},
 
 				updateDescription: function(e) {
-					this.props.contact.description = e.target.value;
-					this.props.onChange(this.props.contact);
+					this.props.onChange(Object.assign({}, this.props.contact, {description: e.target.value}));
 				},
 
 				onSubmit: function(e) {
@@ -69,6 +72,10 @@
 								placeholder='Email (required)'
 								value={this.props.contact.email}
 								onChange={this.updateEmail}/>
+							<input
+								placeholder='Phone (required)'
+								value={this.props.contact.phone}
+								onChange={this.updatePhone}/>
 							<textarea
 								placeholder='Description'
 								value={this.props.contact.description}
@@ -79,14 +86,16 @@
 				}
 			});
 
+			var EMPTY_CONTACT = {name: "", email: "", phone: "", description: ""};
+
 			var ContactView = React.createClass({
 				getInitialState: function() {
 					return {
 						contacts: [
-							{name: "Jessica Lin", email: "jessica.lin@redfin.com", description: "Occasionally goes by Jaylin"},
-							{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com"},
+							{name: "Jessica Lin", email: "jessica.lin@redfin.com", phone: "123-456-7890", description: "Occasionally goes by Jaylin"},
+							{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com", phone: "098-765-4321"},
 						],
-						newContact: {name: "", email: "", description: ""}
+						newContact: EMPTY_CONTACT
 					};
 				},
 
@@ -98,6 +107,16 @@
 
 				submitNewContact: function() {
 					// Please implement this function
+					var contact = this.state.newContact;
+
+					if (contact.name && contact.email && contact.phone) {
+						this.state.contacts.push(contact);
+						
+						this.setState({
+							contacts: this.state.contacts,
+							newContact: EMPTY_CONTACT
+						})
+					}
 				},
 
 				render: function() {
