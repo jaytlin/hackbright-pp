@@ -5,49 +5,41 @@
 	</head>
 	<body>
 		<div id="react-app">
-			<div class="ContactView">
-				<h1 class="ContactView-title">Contacts</h1>
-				<ul class="ContactView-list">
-					<li class="ContactItem">
-						<h2 class="ContactItem-name">Jessica Lin</h2>
-						<a class="ContactItem-email" href="mailto:jessica.lin@redfin.com">jessica.lin@redfin.com</a>
-						<div class="ContactItem-description">Occasionally goes by Jaylin</div>
-					</li>
-					<li class="ContactItem">
-						<h2 class="ContactItem-name">Luke Misenheimer</h2>
-						<a class="ContactItem-email" href="mailto:luke.misenheimer@redfin.com">luke.misenheimer@redfin.com</a>
-					</li>
-				</ul>
-			</div>
 		</div>
 		<script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react.js"></script>
 		<script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react-dom.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
 		<script type="text/babel">
 
-			// var contacts = [
-			// 	{name: "Jessica Lin", email: "jessica.lin@redfin.com", description: "Occasionally goes by Jaylin"},
-			// 	{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com"},
-			// ]
+			var contacts = [
+				{name: "Jessica Lin", email: "jessica.lin@redfin.com", description: "Occasionally goes by Jaylin"},
+				{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com"},
+			]
 
-			// var listElements = contacts
-			// 	.map(function(contact) { 
-			// 		return (
-			// 			<h2 className="ContactItem-name">{contact.name}</h2>
-			// 		)
-			// 	});
+			var listElements = contacts
+				.map(function(contact) {
+					var emailLink = 'mailto:'+contact.email;
 
-			// var rootElement = (
-			// 	<div className='ContactView'>
-			// 		<h1 className='ContactView-title'>Contacts</h1>
-			// 		<ul className='ContactView-list'>{listElements}</ul>
-			// 	</div>
-			// )
+					return (
+						<li className='ContactItem'>
+							<h2 className='ContactItem-name'>{contact.name}</h2>
+							<a className='ContactItem-email' href={emailLink}>{contact.email}</a>
+							<div className='ContactItem-description'>{contact.description}</div>
+						</li>
+					)
+				});
 
-			// ReactDOM.render(
-			// 	rootElement,
-			// 	document.getElementById('react-app')
-			// )
+			var rootElement = (
+				<div className='ContactView'>
+					<h1 className='ContactView-title'>Contacts</h1>
+					<ul className='ContactView-list'>{listElements}</ul>
+				</div>
+			)
+
+			ReactDOM.render(
+				rootElement,
+				document.getElementById('react-app')
+			)
 
 		</script>
 	</body>
