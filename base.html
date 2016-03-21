@@ -11,33 +11,33 @@
 			/*
 			 * Components
 			 */
-			
-			// var ContactItem = React.createClass({
-			// 	propTypes: {
-			// 		name: React.PropTypes.string.isRequired,
-			// 	},
 
-			// 	render: function() {
-			// 		return (
-			// 			React.createElement('li', {className: 'Contact'},
-			// 				React.createElement('h2', {className: 'Contact-name'}, this.props.name)
-			// 			)
-			// 		)
-			// 	},
-			// });
+			var ContactItem = React.createClass({
+				propTypes: {
+					name: React.PropTypes.string.isRequired,
+					email: React.PropTypes.string.isRequired,
+					description: React.PropTypes.string
+				},
+
+				render: function() {
+					return (
+						React.createElement('li', {className: 'Contact'},
+							React.createElement('h2', {className: 'Contact-name'}, this.props.name),
+							React.createElement('a', {href: 'mailto:'+this.props.email}, this.props.email),
+							React.createElement('div', {}, this.props.description)
+						)
+					)
+				},
+			});
 
 			var contacts = [
-				{key: 1, name: "Jessica Lin", email: "jessica.lin@redfin.com", description: "Occasionally goes by Jaylin"},
-				{key: 2, name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com"},
+				{name: "Jessica Lin", email: "jessica.lin@redfin.com", description: "Occasionally goes by Jaylin"},
+				{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com"},
 			]
 
 			var listElements = contacts
 				.map(function(contact) {
-					return React.createElement('li', {key: contact.key},
-						React.createElement('h2', {}, contact.name),
-						React.createElement('a', {href: 'mailto:'+contact.email}, contact.email)
-					)
-				})
+					return React.createElement(ContactItem, contact) })
 
 			var rootElement =
 				React.createElement('div', {}, 
