@@ -7,7 +7,8 @@
 		<div id="react-app"></div>
 		<script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react.js"></script>
 		<script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react-dom.js"></script>
-		<script type="text/javascript">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+		<script type="text/babel">
 			/*
 			 * Components
 			 */
@@ -20,76 +21,97 @@
 				},
 
 				render: function() {
+					var emailLink = "mailto:" + this.props.email;
+
 					return (
-						React.createElement('li', {className: 'ContactItem'},
-							React.createElement('h2', {className: 'ContactItem-name'}, this.props.name),
-							React.createElement('a', {
-								href: 'mailto:'+this.props.email, 
-								className: 'ContactItem-email'
-							}, this.props.email),
-							React.createElement('div', {className: 'ContactItem-description'}, this.props.description)
-						)
+						<li className='ContactItem'>
+							<h2 className='ContactItem-name'>{this.props.name}</h2>
+							<a href={emailLink} className='ContactItem-email'>{this.props.email}</a>
+							<div className='ContactItem-description'>{this.props.description}</div>
+						</li>
 					)
 				},
 			});
 
 			var ContactForm = React.createClass({
 				propTypes: {
-					contact: React.PropTypes.object.isRequired
+					contact: React.PropTypes.object.isRequired,
+					onChange: React.PropTypes.func.isRequired
+				},
+
+				updateName: function(e) {
+					this.props.contact.name = e.target.value;
+					this.props.onChange(this.props.contact);
+				},
+
+				updateEmail: function(e) {
+					this.props.contact.email = e.target.value;
+					this.props.onChange(this.props.contact);
+				},
+
+				updateDescription: function(e) {
+					this.props.contact.description = e.target.value;
+					this.props.onChange(this.props.contact);
 				},
 
 				render: function() {
 					return (
-						React.createElement('form', {className: 'ContactForm'},
-							React.createElement('input', {
-								placeholder: 'Name (required)',
-								value: this.props.contact.name,
-							}),
-							React.createElement('input', {
-								placeholder: 'Email (required)',
-								value: this.props.contact.email,
-							}),
-							React.createElement('textarea', {
-								placeholder: 'Description',
-								value: this.props.contact.description,
-							}),
-							React.createElement('button', {type: 'submit'}, "Add Contact")
-						)
+						<form className='ContactForm'>
+							<input
+								placeholder='Name (required)'
+								value={this.props.contact.name}
+								onChange={this.updateName}/>
+							<input
+								placeholder='Email (required)'
+								value={this.props.contact.email}
+								onChange={this.updateEmail}/>
+							<textarea
+								placeholder='Description'
+								value={this.props.contact.description}
+								onChange={this.updateDescription}/>
+							<button type='submit'>Add Contact</button>
+						</form>
 					)
 				}
 			});
 
-			var contacts = [
-				{name: "Jessica Lin", email: "jessica.lin@redfin.com", description: "Occasionally goes by Jaylin"},
-				{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com"},
-			]
-
 			var ContactView = React.createClass({
-				propTypes: {
-					contacts: React.PropTypes.array.isRequired
+				getInitialState: function() {
+					return {
+						contacts: [
+							{name: "Jessica Lin", email: "jessica.lin@redfin.com", description: "Occasionally goes by Jaylin"},
+							{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com"},
+						],
+						newContact: {name: "", email: "", description: ""}
+					};
+				},
+
+				updateNewContact: function(contact) {
+					this.setState({
+						newContact: contact
+					});
 				},
 
 				render: function() {
-					var listElements = this.props.contacts
-						.map(function(contact) { return React.createElement(ContactItem, contact); });
-					var newContact = {name: "", email: "", description: ""}
+					var listElements = this.state.contacts
+						.map(function(contact) { return <ContactItem {...contact}/>; });
 
 					return (
-						React.createElement('div', {className: 'ContactView'},
-							React.createElement('h1', {className: 'ContactView-title'}, "Contacts"),
-							React.createElement('ul', {className: 'ContactView-list'}, listElements),
-							React.createElement(ContactForm, {
-								contact: newContact
-							})
-						)
+						<div className='ContactView'>
+							<h1 className='ContactView-title'>Contacts</h1>
+							<ul className='ContactView-list'>
+								{listElements}
+							</ul>
+							<ContactForm 
+								contact={this.state.newContact}
+								onChange={this.updateNewContact}/>
+						</div>
 					);
 				},
 			});
 
 			ReactDOM.render(
-				React.createElement(ContactView, {
-					contacts: contacts
-				}),
+				<ContactView/>,
 				document.getElementById('react-app')
 			)
 		</script>
