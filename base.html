@@ -33,52 +33,105 @@
 				},
 			});
 
+			var EMPTY_CONTACT = {name: "", email: "", description: "", errors: null};
+
 			var ContactForm = React.createClass({
 				propTypes: {
-					contact: React.PropTypes.object.isRequired,
-					onChange: React.PropTypes.func.isRequired,
 					onSubmit: React.PropTypes.func.isRequired
 				},
 
+				getInitialState: function() {
+					return {
+						newContact: EMPTY_CONTACT
+					}
+				},
+
 				updateName: function(e) {
-					this.props.onChange(Object.assign({}, this.props.contact, {name: e.target.value}));
+					/*
+						var newContact = {};
+						newContact.name = e.target.value;
+						newContact.email = this.state.newContact.email;
+						newContact.description = this.state.newContact.description;
+						this.setState({
+							newContact: newContact
+						});
+					*/
+					this.setState({
+						newContact: Object.assign({}, this.state.newContact, {name: e.target.value})
+					});
 				},
 
 				updateEmail: function(e) {
-					this.props.onChange(Object.assign({}, this.props.contact, {email: e.target.value}));
+					this.setState({
+						newContact: Object.assign({}, this.state.newContact, {email: e.target.value})
+					});
 				},
 
 				updatePhone: function(e) {
-					this.props.onChange(Object.assign({}, this.props.contact, {phone: e.target.value}));
+					this.setState({
+						newContact: Object.assign({}, this.state.newContact, {phone: e.target.value})
+					});
 				},
 
 				updateDescription: function(e) {
-					this.props.onChange(Object.assign({}, this.props.contact, {description: e.target.value}));
+					this.setState({
+						newContact: Object.assign({}, this.state.newContact, {description: e.target.value})
+					});
 				},
 
 				onSubmit: function(e) {
 					e.preventDefault(); // This prevents the page from refreshing
-					this.props.onSubmit();
+					// Please implement the rest of this function
+					var contact = this.state.newContact;
+					contact.errors = {};
+
+					if (!contact.name) {
+						contact.errors.name = true;
+					}
+
+					if (!contact.email || !/.+@.+\..+/.test(contact.email)) {
+						contact.errors.email = true;
+					}
+
+					if (!contact.phone || !/^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/.test(contact.phone)) {
+						contact.errors.phone = true;
+					}
+
+					if (Object.keys(contact.errors).length === 0) {
+						this.props.onSubmit(this.state.newContact);
+						
+						this.setState({
+							newContact: EMPTY_CONTACT
+						})
+					} else {
+						this.setState({
+							newContact: contact
+						})
+					}
 				},
 
 				render: function() {
+					var errors = this.state.newContact.errors || {};
 					return (
 						<form className='ContactForm' onSubmit={this.onSubmit}>
 							<input
 								placeholder='Name (required)'
-								value={this.props.contact.name}
+								className={errors.name && 'ContactForm-error'} 
+								value={this.state.newContact.name}
 								onChange={this.updateName}/>
 							<input
 								placeholder='Email (required)'
-								value={this.props.contact.email}
+								className={errors.email && 'ContactForm-error'} 
+								value={this.state.newContact.email}
 								onChange={this.updateEmail}/>
 							<input
 								placeholder='Phone (required)'
-								value={this.props.contact.phone}
+								className={errors.phone && 'ContactForm-error'} 
+								value={this.state.newContact.phone}
 								onChange={this.updatePhone}/>
 							<textarea
 								placeholder='Description'
-								value={this.props.contact.description}
+								value={this.state.newContact.description}
 								onChange={this.updateDescription}/>
 							<button type='submit'>Add Contact</button>
 						</form>
@@ -86,37 +139,23 @@
 				}
 			});
 
-			var EMPTY_CONTACT = {name: "", email: "", phone: "", description: ""};
-
 			var ContactView = React.createClass({
 				getInitialState: function() {
 					return {
 						contacts: [
 							{name: "Jessica Lin", email: "jessica.lin@redfin.com", phone: "123-456-7890", description: "Occasionally goes by Jaylin"},
 							{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com", phone: "098-765-4321"},
-						],
-						newContact: EMPTY_CONTACT
+						]
 					};
 				},
 
-				updateNewContact: function(contact) {
-					this.setState({
-						newContact: contact
-					});
-				},
-
-				submitNewContact: function() {
+				addNewContact: function(newContact) {
 					// Please implement this function
-					var contact = this.state.newContact;
-
-					if (contact.name && contact.email && contact.phone) {
-						this.state.contacts.push(contact);
-						
-						this.setState({
-							contacts: this.state.contacts,
-							newContact: EMPTY_CONTACT
-						})
-					}
+					this.state.contacts.push(newContact);
+					
+					this.setState({
+						contacts: this.state.contacts
+					})
 				},
 
 				render: function() {
@@ -127,10 +166,7 @@
 						<div className='ContactView'>
 							<h1 className='ContactView-title'>Contacts</h1>
 							<ul className='ContactView-list'>{listElements}</ul>
-							<ContactForm 
-								contact={this.state.newContact}
-								onChange={this.updateNewContact}
-								onSubmit={this.submitNewContact}/>
+							<ContactForm onSubmit={this.addNewContact}/>
 						</div>
 					);
 				},
