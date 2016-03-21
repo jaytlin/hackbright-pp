@@ -7,45 +7,57 @@
 		<div id="react-app"></div>
 		<script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react.js"></script>
 		<script src="https://cdn.jsdelivr.net/react/0.14.0-rc1/react-dom.js"></script>
-		<script type="text/javascript">
-			/*
-			 * Components
-			 */
-			
-			// var ContactItem = React.createClass({
-			// 	propTypes: {
-			// 		name: React.PropTypes.string.isRequired,
-			// 	},
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+		<script type="text/babel">
 
-			// 	render: function() {
-			// 		return (
-			// 			React.createElement('li', {className: 'Contact'},
-			// 				React.createElement('h2', {className: 'Contact-name'}, this.props.name)
-			// 			)
-			// 		)
-			// 	},
-			// });
+			var ContactItem = React.createClass({
+				propTypes: {
+					name: React.PropTypes.string.isRequired,
+					email: React.PropTypes.string.isRequired,
+					description: React.PropTypes.string
+				},
+
+				render: function() {
+					var emailLink = 'mailto:'+this.props.email;
+
+					return (
+						<li className='ContactItem'>
+							<h2 className='ContactItem-name'>{this.props.name}</h2>
+							<a className='ContactItem-email' href={emailLink}>{this.props.email}</a>
+							<div className='ContactItem-description'>{this.props.description}</div>
+						</li>
+					)
+				},
+			});
 
 			var contacts = [
-				{key: 1, name: "Jessica Lin", email: "jessica.lin@redfin.com", description: "Occasionally goes by Jaylin"},
-				{key: 2, name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com"},
+				{name: "Jessica Lin", email: "jessica.lin@redfin.com", description: "Occasionally goes by Jaylin"},
+				{name: "Luke Misenheimer", email: "luke.misenheimer@redfin.com"},
 			]
 
-			var listElements = contacts
-				.map(function(contact) {
-					return React.createElement('li', {key: contact.key},
-						React.createElement('h2', {}, contact.name),
-						React.createElement('a', {href: 'mailto:'+contact.email}, contact.email)
+			var ContactView = React.createClass({
+				propTypes: {
+					contacts: React.PropTypes.array.isRequired,
+				},
+
+				render: function() {
+					var listElements = this.props.contacts
+						.map(function(contact) { return <ContactItem {...contact}/>; });
+
+					return (
+						<div className='ContactView'>
+							<h1 className='ContactView-title'>Contacts</h1>
+							<ul className='ContactView-list'>{listElements}</ul>
+						</div>
 					)
-				})
+				},
+			});
 
-			var rootElement =
-				React.createElement('div', {}, 
-					React.createElement('h1', {}, "Contacts"),
-					React.createElement('ul', {}, listElements)
-				)
+			ReactDOM.render(
+				<ContactView contacts={contacts}/>,
+				document.getElementById('react-app')
+			)
 
-			ReactDOM.render(rootElement, document.getElementById('react-app'))
 		</script>
 	</body>
 </html>
